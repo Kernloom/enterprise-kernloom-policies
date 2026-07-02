@@ -10,9 +10,9 @@ intent "delegation.ziti-readonly-observation" {
 
   rule "readonly ziti observation" {
     effect   = "allow"
-    subject  = "Kernloom runtime component"
-    action   = "execute"
-    resource = "runtime action"
+    subject  = "OpenZiti adapter"
+    action   = "observe"
+    resource = "OpenZiti production configuration"
 
     only_when = [
       "capability grant is approved"
@@ -20,7 +20,8 @@ intent "delegation.ziti-readonly-observation" {
   }
 
   prohibit = [
-    "adapter expanding its own scope"
+    "adapter expanding its own scope",
+    "credential write without approval"
   ]
 
   runtime {
@@ -29,4 +30,3 @@ intent "delegation.ziti-readonly-observation" {
     max_scope = "not-applicable"
   }
 }
-

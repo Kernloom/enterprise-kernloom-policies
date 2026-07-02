@@ -9,25 +9,28 @@ intent "exceptions.temporary-loadtest-allow-source" {
   risk_recipe = "runtime_anomaly.standard"
 
   rule "temporary load test source exception" {
-    effect   = "observe"
+    effect   = "suppress"
     subject  = "network source"
-    action   = "connect"
-    resource = "production application"
+    action   = "suppress runtime mitigation"
+    resource = "temporary load test source"
 
     only_when = [
-      "capability grant is approved"
+      "capability grant is approved",
+      "load test source",
+      "exception has TTL",
+      "exception has owner"
     ]
   }
 
   prohibit = [
-    "persistent policy change outside Git PR"
+    "persistent policy change outside Git PR",
+    "baseline learning during load test"
   ]
 
   runtime {
     allowed   = true
-    actions   = ["rate_limit"]
+    actions   = ["suppress runtime mitigation"]
     max_ttl   = "30m"
     max_scope = "application"
   }
 }
-
