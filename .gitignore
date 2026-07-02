@@ -1,0 +1,14 @@
+docs/admin/
+*.local.md
+*.secrets.md
+.env
+
+generated/reviews/*
+generated/resolved/*
+generated/bundles/*
+generated/reports/*
+!generated/reviews/.gitkeep
+!generated/resolved/.gitkeep
+!generated/bundles/.gitkeep
+!generated/reports/.gitkeep
+

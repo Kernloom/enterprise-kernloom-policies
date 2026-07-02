@@ -1,0 +1,69 @@
+intent "access.protect-production-admin-access" {
+  version = "kni/v0.5"
+  owner   = "security-platform"
+  type    = "access"
+  target  = "ziti"
+  stage   = "prod"
+
+  profile     = "production.high_assurance_access"
+  risk_recipe = "access_risk.standard"
+
+  rule "admin access" {
+    effect   = "allow"
+    subject  = "human administrator"
+    action   = "access"
+    resource = "production admin application"
+
+    only_when = [
+      "identity assurance is verified",
+      "MFA has passed",
+      "device is managed",
+      "device is healthy",
+      "access risk is low or medium"
+    ]
+  }
+
+  risk_behavior {
+    when "access risk" is "low"      then "allow"
+    when "access risk" is "medium"   then "step_up"
+    when "access risk" is "high"     then "deny"
+    when "access risk" is "critical" then "deny"
+    when "access risk" is "unknown"  then "step_up"
+  }
+
+  prohibit = [
+    "persistent policy change outside Git PR"
+  ]
+
+  runtime {
+    allowed   = true
+    actions   = ["step_up"]
+    max_ttl   = "15m"
+    max_scope = "user"
+  }
+
+  simulation "healthy admin low risk" {
+    given = [
+      "human administrator",
+      "MFA has passed",
+      "device is healthy",
+      "access risk is low or medium"
+    ]
+
+    expect {
+      effect = "allow"
+    }
+  }
+
+  simulation "unhealthy device" {
+    given = [
+      "human administrator",
+      "device is unhealthy"
+    ]
+
+    expect {
+      effect = "deny"
+    }
+  }
+}
+

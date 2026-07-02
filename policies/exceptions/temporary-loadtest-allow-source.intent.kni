@@ -1,0 +1,33 @@
+intent "exceptions.temporary-loadtest-allow-source" {
+  version = "kni/v0.5"
+  owner   = "security-platform"
+  type    = "runtime_allowlist"
+  target  = "klshield"
+  stage   = "prod"
+
+  profile     = "production.runtime_mitigation"
+  risk_recipe = "runtime_anomaly.standard"
+
+  rule "temporary load test source exception" {
+    effect   = "observe"
+    subject  = "network source"
+    action   = "connect"
+    resource = "production application"
+
+    only_when = [
+      "capability grant is approved"
+    ]
+  }
+
+  prohibit = [
+    "persistent policy change outside Git PR"
+  ]
+
+  runtime {
+    allowed   = true
+    actions   = ["rate_limit"]
+    max_ttl   = "30m"
+    max_scope = "application"
+  }
+}
+

@@ -1,0 +1,32 @@
+intent "delegation.ziti-readonly-observation" {
+  version = "kni/v0.5"
+  owner   = "security-platform"
+  type    = "delegation"
+  target  = "ziti"
+  stage   = "prod"
+
+  profile     = "production.high_assurance_access"
+  risk_recipe = "conformance_risk.standard"
+
+  rule "readonly ziti observation" {
+    effect   = "allow"
+    subject  = "Kernloom runtime component"
+    action   = "execute"
+    resource = "runtime action"
+
+    only_when = [
+      "capability grant is approved"
+    ]
+  }
+
+  prohibit = [
+    "adapter expanding its own scope"
+  ]
+
+  runtime {
+    allowed   = false
+    max_ttl   = "not-applicable"
+    max_scope = "not-applicable"
+  }
+}
+

@@ -1,0 +1,53 @@
+intent "kernloom.runtime-actions-require-safety-metadata" {
+  version = "kni/v0.5"
+  owner   = "security-platform"
+  type    = "runtime_governance"
+  target  = "kernloom"
+  stage   = "prod"
+
+  profile     = "kernloom.runtime_governance"
+  risk_recipe = "conformance_risk.standard"
+
+  rule "safe runtime execution" {
+    effect   = "allow"
+    subject  = "Kernloom runtime component"
+    action   = "execute"
+    resource = "runtime action"
+
+    only_when = [
+      "runtime action has TTL",
+      "runtime action has scope",
+      "runtime action has reason",
+      "runtime action has audit ID",
+      "runtime bundle is signed",
+      "capability grant is approved"
+    ]
+  }
+
+  prohibit = [
+    "runtime action without TTL",
+    "runtime action from unsigned bundle",
+    "adapter expanding its own scope",
+    "persistent policy change outside Git PR",
+    "KLIQ inventing its own authority"
+  ]
+
+  runtime {
+    allowed   = true
+    max_ttl   = "15m"
+    max_scope = "application"
+  }
+
+  simulation "missing TTL" {
+    given = [
+      "runtime action has no TTL",
+      "runtime bundle is signed",
+      "capability grant is approved"
+    ]
+
+    expect {
+      effect = "deny"
+    }
+  }
+}
+

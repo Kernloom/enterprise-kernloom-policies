@@ -1,0 +1,67 @@
+intent "runtime.mitigate-abnormal-source-behavior" {
+  version = "kni/v0.5"
+  owner   = "security-platform"
+  type    = "runtime_mitigation"
+  target  = "klshield"
+  stage   = "prod"
+
+  profile     = "production.runtime_mitigation"
+  risk_recipe = "runtime_anomaly.standard"
+
+  rule "abnormal source mitigation" {
+    effect   = "rate_limit"
+    subject  = "network source"
+    action   = "connect"
+    resource = "production application"
+
+    only_when = [
+      "source deviates from entity baseline",
+      "packet rate exceeds population baseline",
+      "new unexpected relationship appears",
+      "runtime anomaly risk is high"
+    ]
+  }
+
+  risk_behavior {
+    when "runtime anomaly risk" is "low"      then "allow"
+    when "runtime anomaly risk" is "medium"   then "observe"
+    when "runtime anomaly risk" is "high"     then "rate_limit"
+    when "runtime anomaly risk" is "critical" then "deny_temporarily"
+    when "runtime anomaly risk" is "unknown"  then "observe"
+  }
+
+  prohibit = [
+    "runtime action without TTL",
+    "persistent policy change outside Git PR"
+  ]
+
+  runtime {
+    allowed   = true
+    actions   = ["rate_limit", "deny_temporarily"]
+    max_ttl   = "10m"
+    max_scope = "application"
+  }
+
+  simulation "normal traffic" {
+    given = [
+      "source behaves within baseline",
+      "runtime anomaly risk is low"
+    ]
+
+    expect {
+      effect = "allow"
+    }
+  }
+
+  simulation "high risk deviation" {
+    given = [
+      "source deviates from entity baseline",
+      "runtime anomaly risk is high"
+    ]
+
+    expect {
+      effect = "rate_limit"
+    }
+  }
+}
+
