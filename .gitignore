@@ -5,10 +5,11 @@ docs/admin/
 
 generated/reviews/*
 generated/resolved/*
+generated/artifacts/*
 generated/bundles/*
 generated/reports/*
 !generated/reviews/.gitkeep
 !generated/resolved/.gitkeep
+!generated/artifacts/.gitkeep
 !generated/bundles/.gitkeep
 !generated/reports/.gitkeep
-
