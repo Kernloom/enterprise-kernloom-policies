@@ -5,8 +5,8 @@ intent "delegation.ziti-readonly-observation" {
   target  = "ziti"
   stage   = "prod"
 
-  profile     = "production.high_assurance_access"
-  risk_recipe = "conformance_risk.standard"
+  profile     = "production.delegation_readonly"
+  risk_recipe = "delegation_risk.standard"
 
   rule "readonly ziti observation" {
     effect   = "allow"
@@ -15,8 +15,17 @@ intent "delegation.ziti-readonly-observation" {
     resource = "OpenZiti production configuration"
 
     only_when = [
-      "capability grant is approved"
+      "capability grant is approved",
+      "grant is read-only"
     ]
+  }
+
+  risk_behavior {
+    when "delegation risk" is "low"      then "allow"
+    when "delegation risk" is "medium"   then "manual_review"
+    when "delegation risk" is "high"     then "mark_unsafe"
+    when "delegation risk" is "critical" then "mark_unsafe"
+    when "delegation risk" is "unknown"  then "manual_review"
   }
 
   prohibit = [
@@ -28,5 +37,40 @@ intent "delegation.ziti-readonly-observation" {
     allowed   = false
     max_ttl   = "not-applicable"
     max_scope = "not-applicable"
+  }
+
+  simulation "approved readonly grant" {
+    given = [
+      "OpenZiti adapter",
+      "capability grant is approved",
+      "grant is read-only"
+    ]
+
+    expect {
+      effect = "allow"
+    }
+  }
+
+  simulation "credential write requested" {
+    given = [
+      "OpenZiti adapter",
+      "capability grant is approved",
+      "grant requests credential write"
+    ]
+
+    expect {
+      effect = "mark_unsafe"
+    }
+  }
+
+  simulation "missing capability grant" {
+    given = [
+      "OpenZiti adapter",
+      "capability grant is missing"
+    ]
+
+    expect {
+      effect = "manual_review"
+    }
   }
 }

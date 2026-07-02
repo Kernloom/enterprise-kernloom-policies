@@ -65,5 +65,17 @@ intent "access.protect-production-admin-access" {
       effect = "deny"
     }
   }
-}
 
+  simulation "unknown access risk" {
+    given = [
+      "human administrator",
+      "MFA has passed",
+      "device is healthy",
+      "access risk is unknown"
+    ]
+
+    expect {
+      effect = "step_up"
+    }
+  }
+}

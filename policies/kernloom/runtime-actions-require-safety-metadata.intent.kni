@@ -49,5 +49,34 @@ intent "kernloom.runtime-actions-require-safety-metadata" {
       effect = "deny"
     }
   }
-}
 
+  simulation "complete safety metadata" {
+    given = [
+      "runtime action has TTL",
+      "runtime action has scope",
+      "runtime action has reason",
+      "runtime action has audit ID",
+      "runtime bundle is signed",
+      "capability grant is approved"
+    ]
+
+    expect {
+      effect = "allow"
+    }
+  }
+
+  simulation "unsigned runtime bundle" {
+    given = [
+      "runtime action has TTL",
+      "runtime action has scope",
+      "runtime action has reason",
+      "runtime action has audit ID",
+      "runtime bundle is unsigned",
+      "capability grant is approved"
+    ]
+
+    expect {
+      effect = "deny"
+    }
+  }
+}

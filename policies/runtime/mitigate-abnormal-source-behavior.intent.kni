@@ -63,5 +63,15 @@ intent "runtime.mitigate-abnormal-source-behavior" {
       effect = "rate_limit"
     }
   }
-}
 
+  simulation "unknown runtime risk" {
+    given = [
+      "new unexpected relationship appears",
+      "runtime anomaly risk is unknown"
+    ]
+
+    expect {
+      effect = "observe"
+    }
+  }
+}

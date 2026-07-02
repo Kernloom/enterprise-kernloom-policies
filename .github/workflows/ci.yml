@@ -11,15 +11,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
-          repository: Kernloom/kernloom-core
+          repository: kernloom/kernloom-core
           path: kernloom-core
       - uses: actions/checkout@v4
         with:
-          repository: Kernloom/kernloom-core-registry
+          repository: kernloom/kernloom-core-registry
           path: kernloom-core-registry
       - uses: actions/checkout@v4
         with:
-          repository: Kernloom/enterprise-kernloom-registry
+          repository: kernloom/enterprise-kernloom-registry
           path: enterprise-kernloom-registry
       - uses: actions/setup-go@v5
         with:

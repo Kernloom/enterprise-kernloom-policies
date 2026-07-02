@@ -5,8 +5,8 @@ intent "exceptions.temporary-loadtest-allow-source" {
   target  = "klshield"
   stage   = "prod"
 
-  profile     = "production.runtime_mitigation"
-  risk_recipe = "runtime_anomaly.standard"
+  profile     = "production.temporary_runtime_exception"
+  risk_recipe = "exception_risk.standard"
 
   rule "temporary load test source exception" {
     effect   = "suppress"
@@ -18,8 +18,19 @@ intent "exceptions.temporary-loadtest-allow-source" {
       "capability grant is approved",
       "load test source",
       "exception has TTL",
-      "exception has owner"
+      "exception has owner",
+      "exception has reason",
+      "exception scope is application",
+      "exception is active"
     ]
+  }
+
+  risk_behavior {
+    when "exception risk" is "low"      then "suppress"
+    when "exception risk" is "medium"   then "manual_review"
+    when "exception risk" is "high"     then "deny"
+    when "exception risk" is "critical" then "deny"
+    when "exception risk" is "unknown"  then "manual_review"
   }
 
   prohibit = [
@@ -32,5 +43,48 @@ intent "exceptions.temporary-loadtest-allow-source" {
     actions   = ["suppress runtime mitigation"]
     max_ttl   = "30m"
     max_scope = "application"
+  }
+
+  simulation "valid bounded exception" {
+    given = [
+      "network source",
+      "capability grant is approved",
+      "load test source",
+      "exception has TTL",
+      "exception has owner",
+      "exception has reason",
+      "exception scope is application",
+      "exception is active"
+    ]
+
+    expect {
+      effect = "suppress"
+    }
+  }
+
+  simulation "missing exception TTL" {
+    given = [
+      "network source",
+      "capability grant is approved",
+      "load test source",
+      "exception missing TTL",
+      "exception has owner"
+    ]
+
+    expect {
+      effect = "deny"
+    }
+  }
+
+  simulation "expired exception" {
+    given = [
+      "network source",
+      "load test source",
+      "exception is expired"
+    ]
+
+    expect {
+      effect = "defer to normal policy"
+    }
   }
 }
