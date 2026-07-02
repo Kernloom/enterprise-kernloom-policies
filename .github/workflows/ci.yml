@@ -23,7 +23,7 @@ jobs:
           path: enterprise-kernloom-registry
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.26.4"
+          go-version: "1.26"
       - run: test -f policies/access/protect-production-admin-access.intent.kni
       - run: test -f policies/runtime/mitigate-abnormal-source-behavior.intent.kni
       - run: test -f policies/kernloom/runtime-actions-require-safety-metadata.intent.kni
