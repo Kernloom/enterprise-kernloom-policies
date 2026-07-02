@@ -6,10 +6,16 @@ docs/admin/
 generated/reviews/*
 generated/resolved/*
 generated/artifacts/*
+generated/signed/*
+generated/keys/*
+generated/artifact-store/*
 generated/bundles/*
 generated/reports/*
 !generated/reviews/.gitkeep
 !generated/resolved/.gitkeep
 !generated/artifacts/.gitkeep
+!generated/signed/.gitkeep
+!generated/keys/.gitkeep
+!generated/artifact-store/.gitkeep
 !generated/bundles/.gitkeep
 !generated/reports/.gitkeep
