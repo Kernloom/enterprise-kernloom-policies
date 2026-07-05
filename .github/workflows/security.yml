@@ -1,0 +1,43 @@
+name: security
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "19 4 * * 1"
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx-json
+          output-file: enterprise-kernloom-policies.spdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: enterprise-kernloom-policies-sbom
+          path: enterprise-kernloom-policies.spdx.json
+
+  trivy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: fs
+          format: sarif
+          output: trivy-results.sarif
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif
