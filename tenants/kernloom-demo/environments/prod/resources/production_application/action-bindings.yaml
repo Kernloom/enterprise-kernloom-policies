@@ -1,0 +1,79 @@
+application:
+  id: production_application
+  tenant: kernloom-demo
+  environment: prod
+
+actions:
+  - id: runtime.abnormal_source_mitigation
+    canonical_action: kernloom_action.runtime_abnormal_source_mitigation
+    type: action_type.runtime_mitigation
+    sensitivity: high
+    description: Mitigate abnormal source behavior against the production application.
+    approval:
+      status: approved
+      approved_by: security-platform
+      approved_at: "2026-07-07T00:00:00Z"
+    bindings:
+      - id: abnormal_source_rate_limit_klshield
+        target_ref: environments/prod/targets/klshield-prod.yaml
+        capability: enforce.runtime.rate_limit_entity
+        selector:
+          type: selector.klshield.entity.v1
+          entity_type: entity_type.network_source
+          scope: application
+        controls:
+          - runtime_action_applied
+          - runtime_action_readback
+        proof:
+          expected_events:
+            - event.runtime_action_applied
+            - event.runtime_action_readback
+        approval:
+          status: approved
+          approved_by: security-platform
+          approved_at: "2026-07-07T00:00:00Z"
+      - id: abnormal_source_temporary_deny_klshield
+        target_ref: environments/prod/targets/klshield-prod.yaml
+        capability: enforce.runtime.deny_entity_temporarily
+        selector:
+          type: selector.klshield.entity.v1
+          entity_type: entity_type.network_source
+          scope: application
+        controls:
+          - runtime_action_applied
+          - runtime_action_readback
+        proof:
+          expected_events:
+            - event.runtime_action_applied
+            - event.runtime_action_readback
+        approval:
+          status: approved
+          approved_by: security-platform
+          approved_at: "2026-07-07T00:00:00Z"
+
+  - id: ziti.production_service_connectivity
+    canonical_action: kernloom_action.production_service_connectivity
+    type: action_type.connectivity
+    sensitivity: medium
+    description: Keep production service connectivity aligned with approved overlay policy.
+    approval:
+      status: approved
+      approved_by: network-platform
+      approved_at: "2026-07-07T00:00:00Z"
+    bindings:
+      - id: production_service_policy_ziti
+        target_ref: environments/prod/targets/ziti-prod.yaml
+        capability: validate.config.overlay_service_policy
+        selector:
+          type: selector.ziti.service_policy.v1
+          service: production-application
+          identity_role: production-client
+        controls:
+          - ziti_service_policy_present
+        proof:
+          expected_events:
+            - event.config_conformance_observed
+        approval:
+          status: approved
+          approved_by: network-platform
+          approved_at: "2026-07-07T00:00:00Z"

@@ -1,0 +1,8 @@
+proof_requirements:
+  tenant: kernloom-demo
+  environment: prod
+  resource: production_application
+  requirements:
+    - id: runtime_action_readback_required
+      evidence:
+        - evidence.runtime_action_readback

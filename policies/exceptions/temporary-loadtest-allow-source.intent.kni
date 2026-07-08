@@ -39,8 +39,7 @@ intent "exceptions.temporary-loadtest-allow-source" {
   ]
 
   runtime {
-    allowed   = true
-    actions   = ["suppress runtime mitigation"]
+    allowed   = false
     max_ttl   = "30m"
     max_scope = "application"
   }

@@ -25,10 +25,10 @@ intent "access.protect-production-admin-access" {
 
   risk_behavior {
     when "access risk" is "low"      then "allow"
-    when "access risk" is "medium"   then "step_up"
+    when "access risk" is "medium"   then "manual_review"
     when "access risk" is "high"     then "deny"
     when "access risk" is "critical" then "deny"
-    when "access risk" is "unknown"  then "step_up"
+    when "access risk" is "unknown"  then "manual_review"
   }
 
   prohibit = [
@@ -36,8 +36,7 @@ intent "access.protect-production-admin-access" {
   ]
 
   runtime {
-    allowed   = true
-    actions   = ["step_up"]
+    allowed   = false
     max_ttl   = "15m"
     max_scope = "user"
   }
@@ -75,7 +74,7 @@ intent "access.protect-production-admin-access" {
     ]
 
     expect {
-      effect = "step_up"
+      effect = "manual_review"
     }
   }
 }

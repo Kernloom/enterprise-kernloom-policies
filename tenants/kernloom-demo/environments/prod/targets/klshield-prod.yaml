@@ -1,0 +1,22 @@
+target:
+  id: klshield-prod
+  tenant: kernloom-demo
+  environment: prod
+  type: klshield_runtime
+  adapter: kernloom.adapter.klshield
+  adapter_version: 0.1.0
+  capabilities:
+    - enforce.runtime.rate_limit_entity
+    - enforce.runtime.deny_entity_temporarily
+    - read.runtime_action_state
+  validation_profiles:
+    - validation.klshield.runtime_action.v1
+  validation_source:
+    mode: git
+    repo_ref: repo.kernloom-demo-klshield-config
+    base_path: envs/prod
+  runtime:
+    kliq_ref: kliq-klshield-prod-01
+  ownership:
+    owner_team: security-platform
+    security_owner: security-platform

@@ -1,0 +1,22 @@
+target:
+  id: ziti-prod
+  tenant: kernloom-demo
+  environment: prod
+  type: openziti_overlay
+  adapter: kernloom.adapter.ziti
+  adapter_version: 0.1.0
+  capabilities:
+    - read.state.overlay_service_policy
+    - plan.config.overlay_service_policy
+    - validate.config.overlay_service_policy
+    - provide.relationship.observed_relationship
+    - provide.evidence.config_conformance
+  validation_profiles:
+    - validation.ziti.overlay_service_policy.v1
+  validation_source:
+    mode: git
+    repo_ref: repo.kernloom-demo-ziti-config
+    base_path: envs/prod
+  ownership:
+    owner_team: network-platform
+    security_owner: security-platform
